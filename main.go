@@ -10,7 +10,7 @@ import (
 
 func main()  {
 	fmt.Println("1")
-	c, err := streamserver.New(0)
+	c, err := streamserver.CameraInit(0)
 	if (err != nil) {
 		panic(err)
 	}

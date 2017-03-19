@@ -14,7 +14,7 @@ type Camera struct {
 	mutex *sync.Mutex
 }
 
-func New(camNum int) (c *Camera, err error) {
+func CameraInit(camNum int) (c *Camera, err error) {
 	log.Println("Try to init web camera...")
 	cap := opencv.NewCameraCapture(camNum)
 	if (cap == nil) {
