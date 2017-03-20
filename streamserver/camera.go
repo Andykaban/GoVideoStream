@@ -27,7 +27,7 @@ func CameraInit(camNum int) (c *Camera, err error) {
 	}, nil
 }
 
-func (c *Camera) GrabImage() (grabImage *bytes.Buffer, err error){
+func (c *Camera) GrabImage() (imageBuffer *bytes.Buffer, err error){
 	log.Println("Try to grab image...")
 	c.mutex.Lock()
 	defer c.mutex.Unlock()

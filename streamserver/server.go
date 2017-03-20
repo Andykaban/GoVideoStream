@@ -50,7 +50,13 @@ func getEnv(envName string, defVal string) (val string) {
 
 func (s *Server) Run() (err error) {
 	log.Printf("Start server on %s:%d\n", s.host, s.port)
-	defer s.camera.Close()
 	http.Handle("/", s)
 	return http.ListenAndServe(fmt.Sprintf("%s:%d", s.host, s.port), nil)
+}
+
+func (s* Server) Close() (err error) {
+	log.Println("Close server")
+	if (s.camera != nil) {
+		s.camera.Close()
+	}
 }
