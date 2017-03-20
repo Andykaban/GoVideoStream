@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"text/template"
 	"time"
 )
 
@@ -86,15 +85,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.NotFound(w, r)
 	}
-}
-
-func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
-	indexTemplate, err := template.ParseFiles("/static/index.html")
-	if (err != nil) {
-		log.Println(err)
-		http.Error(w, "", http.StatusInternalServerError)
-	}
-	indexTemplate.Execute(w, nil)
 }
 
 func (s *Server) handleStream(w http.ResponseWriter, r *http.Request) {
