@@ -13,10 +13,11 @@ var indexPage = `
   </head>
   <body>
     <h1>Video Streaming Demonstration</h1>
-    <img src="http://127.0.0.1:1488/stream">
+    <img src="/stream">
   </body>
 </html>
 `
+
 func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	indexTemplate, err := template.New("index").Parse(indexPage)
 	if (err != nil) {
