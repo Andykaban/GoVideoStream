@@ -37,7 +37,7 @@ func New() (s *Server, err error) {
 	}
 	camera, err := CameraInit(cameraNum)
 	if (err != nil) {
-		log.Println(err)
+		log.Println(err.Error())
 		return nil, fmt.Errorf("Camera %d not initialized", cameraNum)
 	}
 	framePerSecondStr := getEnv("FRAME_PER_SECOND", "2")
@@ -63,7 +63,7 @@ func getEnv(envName string, defVal string) (val string) {
 }
 
 func (s *Server) Run() (err error) {
-	log.Printf("Start server on %s:%d\n", s.host, s.port)
+	log.Printf("Server is started on %s:%d host:port\n", s.host, s.port)
 	http.Handle("/", s)
 	return http.ListenAndServe(fmt.Sprintf("%s:%d", s.host, s.port), nil)
 }
@@ -93,8 +93,8 @@ func (s *Server) handleStream(w http.ResponseWriter, r *http.Request) {
 	for {
 		camImage, err := s.camera.GrabImage()
 		if (err != nil) {
-			log.Println(err)
-			http.Error(w, "", http.StatusInternalServerError)
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			break
 		}
 		camImageByte := camImage.Bytes()
