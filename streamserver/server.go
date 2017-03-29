@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"sync"
 )
 
 const FRAMEHEADER = "\r\n" +
@@ -19,8 +20,11 @@ const FRAMEHEADER = "\r\n" +
 type Server struct {
 	host string
 	port int
+	clients map[chan []byte] bool
 	framePerSecond int
 	camera *Camera
+	mutex *sync.Mutex
+	currentFrame []byte
 }
 
 func New() (s *Server, err error) {
@@ -49,8 +53,11 @@ func New() (s *Server, err error) {
 	return &Server{
 		host: host,
 		port: port,
+		clients: make(map[chan []byte] bool),
 		framePerSecond: framePerSecond,
 		camera: camera,
+		mutex: &sync.Mutex{},
+		currentFrame: make([]byte, len(FRAMEHEADER)),
 	}, nil
 }
 
@@ -65,12 +72,15 @@ func getEnv(envName string, defVal string) (val string) {
 func (s *Server) Run() (err error) {
 	log.Printf("Server is started on %s:%d host:port\n", s.host, s.port)
 	http.Handle("/", s)
+	s.currentFrameUpdater()
 	return http.ListenAndServe(fmt.Sprintf("%s:%d", s.host, s.port), nil)
 }
 
 func (s *Server) Terminate() {
 	log.Println("Terminate server")
 	if (s.camera != nil) {
+		s.mutex.Lock()
+		defer s.mutex.Unlock()
 		s.camera.Close()
 	}
 }
@@ -89,23 +99,48 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleStream(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Connected - %s", r.RemoteAddr)
+	streamCh := make(chan []byte)
+	s.mutex.Lock()
+	s.clients[streamCh] = true
+	s.mutex.Unlock()
 	w.Header().Add("Content-Type", "multipart/x-mixed-replace;boundary=frame")
 	for {
-		camImage, err := s.camera.GrabImage()
-		if (err != nil) {
-			log.Println(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			break
-		}
-		camImageByte := camImage.Bytes()
-		header := fmt.Sprintf(FRAMEHEADER, len(camImageByte))
-		httpImageBody := make([]byte, (len(header) + len(camImageByte)) * 2)
-		copy(httpImageBody, header)
-		copy(httpImageBody[len(header):], camImageByte)
+		httpImageBody := <- streamCh
 		if _, err := w.Write(httpImageBody); err != nil {
 			log.Printf("Close -%s", r.RemoteAddr)
 			break
 		}
 		time.Sleep(time.Duration(s.framePerSecond)* time.Second)
 	}
+	s.mutex.Lock()
+	delete(s.clients, streamCh)
+	s.mutex.Unlock()
+}
+
+func (s *Server) currentFrameUpdater() {
+	go func() {
+		for {
+			camImage, err := s.camera.GrabImage()
+			if (err != nil) {
+				log.Println(err.Error())
+				break
+			}
+			camImageByte := camImage.Bytes()
+			header := fmt.Sprintf(FRAMEHEADER, len(camImageByte))
+			if (len(s.currentFrame) < (len(header) + len(camImageByte))) {
+				s.currentFrame = make([]byte, (len(header) + len(camImageByte) * 2))
+			}
+			copy(s.currentFrame, header)
+			copy(s.currentFrame[len(header):], camImageByte)
+
+			s.mutex.Lock()
+			for ch := range s.clients {
+				select {
+				case ch <- s.currentFrame:
+				default:
+				}
+			}
+			s.mutex.Unlock()
+		}
+	}()
 }
