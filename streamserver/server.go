@@ -120,6 +120,12 @@ func (s *Server) handleStream(w http.ResponseWriter, r *http.Request) {
 func (s *Server) currentFrameUpdater() {
 	go func() {
 		for {
+			s.mutex.Lock()
+			clients_count := len(s.clients)
+			s.mutex.Unlock()
+			if (clients_count == 0) {
+				continue
+			}
 			camImage, err := s.camera.GrabImage()
 			if (err != nil) {
 				log.Println(err.Error())
