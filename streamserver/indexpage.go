@@ -20,7 +20,7 @@ var indexPage = `
 
 func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	indexTemplate, err := template.New("index").Parse(indexPage)
-	if (err != nil) {
+	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
