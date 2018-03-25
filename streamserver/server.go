@@ -27,7 +27,7 @@ type Server struct {
 	TerminateServerChannel chan bool
 }
 
-func New(host string, port int, frameDelay int, camMode string, camNum int) (s *Server) {
+func New(host string, port int, frameDelay int, camMode string, camNum int) (*Server) {
 	return &Server{
 		host: host,
 		port: port,
@@ -46,7 +46,13 @@ func (s *Server) GetCamera() (image_grabber.ImageGrabber, error) {
 		camera, err := image_grabber.NewOpenCVCamera(s.webcamNumber)
 		if err != nil {
 			log.Println(err.Error())
-			return nil, fmt.Errorf("Camera %d not initialized", s.webcamNumber)
+			return nil, fmt.Errorf("Camera %d not initialized by OpenCV", s.webcamNumber)
+		}
+		return camera, nil
+	} else if s.webcamMode == "v4l" {
+		camera, err := image_grabber.NewV4LCamera(s.webcamNumber)
+		if err != nil {
+			return nil, fmt.Errorf("Camera %d not initialized by v4l", s.webcamNumber)
 		}
 		return camera, nil
 	} else {
@@ -54,7 +60,7 @@ func (s *Server) GetCamera() (image_grabber.ImageGrabber, error) {
 	}
 }
 
-func (s *Server) Run() (err error) {
+func (s *Server) Run() (error) {
 	camera, err := s.GetCamera()
 	if err != nil {
 		panic(err)

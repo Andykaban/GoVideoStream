@@ -13,7 +13,7 @@ type OpenCVCamera struct {
 }
 
 func NewOpenCVCamera(camNum int) (ImageGrabber, error) {
-	log.Println("Try to init web camera...")
+	log.Println("Try to init web camera with OpenCV...")
 	webcam, err := gocv.VideoCaptureDevice(int(camNum))
 	if err != nil {
 		log.Println(err)
@@ -26,7 +26,7 @@ func NewOpenCVCamera(camNum int) (ImageGrabber, error) {
 	}, nil
 }
 
-func (c *OpenCVCamera) GrabImage() (imageJpeg []byte, err error){
+func (c *OpenCVCamera) GrabImage() ([]byte, error) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	img := gocv.NewMat()
@@ -41,9 +41,9 @@ func (c *OpenCVCamera) GrabImage() (imageJpeg []byte, err error){
 	return buf, nil
 }
 
-func (c *OpenCVCamera) Close() (err error) {
+func (c *OpenCVCamera) Close() (error) {
 	if c.webcam != nil {
-		log.Println("Release web camera...")
+		log.Println("Release OpenCV web camera...")
 		c.webcam.Close()
 	}
 	return nil
