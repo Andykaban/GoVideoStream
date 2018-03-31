@@ -12,13 +12,15 @@ type V4LGrabber struct {
 	mutex *sync.Mutex
 }
 
-func NewV4LCamera(camNum int) (ImageGrabber, error){
+func NewV4LCamera(camNum int) (ImageGrabber, error) {
 	camPath := fmt.Sprintf("/dev/video%d", camNum)
 	cam, err := webcam.Open(camPath)
 	if err != nil {
 		log.Println(err)
 		return nil, fmt.Errorf("Error init web camera with %s path", camPath)
 	}
+	format, _ := getWebcamFormatByString("MJPG")
+	cam.SetImageFormat(format, 640, 480)
 	err = cam.StartStreaming()
 	if err != nil {
 		log.Println(err)
@@ -28,6 +30,17 @@ func NewV4LCamera(camNum int) (ImageGrabber, error){
 		cam: cam,
 		mutex: &sync.Mutex{},
 	}, nil
+}
+
+func getWebcamFormatByString(formatStr string) (webcam.PixelFormat, error) {
+	chars := []rune(formatStr)
+	if len(chars) != 4 {
+		return 0, fmt.Errorf("Format string its to long")
+	}
+	p := chars[0:4]
+	formatCode := uint32(p[0]) | (uint32(p[1])<<8) | (uint32(p[2])<<16) | (uint32(p[3])<<24)
+	ret := webcam.PixelFormat(formatCode)
+	return ret, nil
 }
 
 func (c *V4LGrabber) GrabImage() ([]byte, error) {
