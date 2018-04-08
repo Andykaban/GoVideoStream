@@ -1,3 +1,5 @@
+// +build with_opencv
+
 package image_grabber
 
 import (
