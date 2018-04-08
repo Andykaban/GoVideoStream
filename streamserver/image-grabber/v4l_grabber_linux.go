@@ -48,6 +48,7 @@ func (c *V4LGrabber) GrabImage() ([]byte, error) {
 	defer c.mutex.Unlock()
 	imageJpeg, err := c.cam.ReadFrame()
 	if err != nil {
+		log.Println(err)
 		return nil, fmt.Errorf("Grabbed image not retreaved from web camera")
 	}
 	if len(imageJpeg) == 0 {
