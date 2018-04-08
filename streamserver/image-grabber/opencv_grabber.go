@@ -44,6 +44,8 @@ func (c *OpenCVCamera) GrabImage() ([]byte, error) {
 }
 
 func (c *OpenCVCamera) Close() (error) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 	if c.webcam != nil {
 		log.Println("Release OpenCV web camera...")
 		c.webcam.Close()

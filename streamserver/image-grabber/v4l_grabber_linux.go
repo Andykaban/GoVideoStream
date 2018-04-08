@@ -70,6 +70,8 @@ func (c *V4LGrabber) GrabImage() ([]byte, error) {
 }
 
 func (c *V4LGrabber) Close() error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 	if c.cam != nil {
 		err := c.cam.StopStreaming()
 		if err != nil {
