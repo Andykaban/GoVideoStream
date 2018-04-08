@@ -46,6 +46,18 @@ func getWebcamFormatByString(formatStr string) (webcam.PixelFormat, error) {
 func (c *V4LGrabber) GrabImage() ([]byte, error) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
+
+	err := c.cam.WaitForFrame(1)
+
+	switch err.(type) {
+	case nil:
+	case *webcam.Timeout:
+		return nil, fmt.Errorf("Web Camera timeout")
+	default:
+		log.Println(err)
+		return nil, fmt.Errorf("Somthing wrong...")
+	}
+
 	imageJpeg, err := c.cam.ReadFrame()
 	if err != nil {
 		log.Println(err)
