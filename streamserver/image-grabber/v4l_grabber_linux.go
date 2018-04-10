@@ -47,7 +47,7 @@ func (c *V4LGrabber) GrabImage() ([]byte, error) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	err := c.cam.WaitForFrame(1)
+	err := c.cam.WaitForFrame(0)
 
 	switch err.(type) {
 	case nil:
@@ -55,7 +55,7 @@ func (c *V4LGrabber) GrabImage() ([]byte, error) {
 		return nil, fmt.Errorf("web Camera timeout")
 	default:
 		log.Println(err)
-		return nil, fmt.Errorf("Somthing wrong...")
+		return nil, err
 	}
 
 	imageJpeg, err := c.cam.ReadFrame()
