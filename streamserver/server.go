@@ -93,7 +93,7 @@ func (s *Server) handleStream(w http.ResponseWriter, r *http.Request) {
 	for {
 		httpImageBody := <- streamCh
 		if _, err := w.Write(httpImageBody); err != nil {
-			log.Printf("Close -%s", r.RemoteAddr)
+			log.Printf("Close - %s", r.RemoteAddr)
 			break
 		}
 		time.Sleep(time.Duration(s.framePerSecond)* time.Second)
