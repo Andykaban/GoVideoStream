@@ -7,7 +7,6 @@ import (
 	"os/signal"
 	"syscall"
 	"github.com/Andykaban/GoVideoStream/streamserver"
-	"fmt"
 )
 
 var (
@@ -19,7 +18,7 @@ var (
 )
 
 func Usage() {
-	fmt.Println("Video stream server")
+	log.Println("Video stream server")
 	flag.PrintDefaults()
 }
 

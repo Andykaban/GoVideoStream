@@ -8,5 +8,5 @@ import (
 func NewV4LCamera(camNum int) (ImageGrabber, error) {
 	camPath := fmt.Sprintf("/dev/video%d", camNum)
 	fmt.Printf("Try to open %s", camPath)
-	return nil, errors.New("Not implemented for Windows")
+	return nil, errors.New("not implemented for windows")
 }

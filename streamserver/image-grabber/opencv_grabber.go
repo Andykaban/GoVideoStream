@@ -19,7 +19,7 @@ func NewOpenCVCamera(camNum int) (ImageGrabber, error) {
 	webcam, err := gocv.VideoCaptureDevice(int(camNum))
 	if err != nil {
 		log.Println(err)
-		return nil, fmt.Errorf("Error init web camera with %d number", camNum)
+		return nil, fmt.Errorf("error init web camera with %d number", camNum)
 	}
 
 	return &OpenCVCamera{
@@ -34,11 +34,11 @@ func (c *OpenCVCamera) GrabImage() ([]byte, error) {
 	img := gocv.NewMat()
 	defer img.Close()
 	if ok := c.webcam.Read(img); !ok {
-		return nil, fmt.Errorf("Grabbed image not retreaved from web camera")
+		return nil, fmt.Errorf("grabbed image not retreaved from web camera")
 	}
 	buf, err := gocv.IMEncode(".jpg", img)
 	if err !=nil {
-		return nil, fmt.Errorf("Grabbed image not encoded to jpeg format")
+		return nil, fmt.Errorf("grabbed image not encoded to jpeg format")
 	}
 	return buf, nil
 }

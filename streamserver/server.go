@@ -46,17 +46,17 @@ func (s *Server) GetCamera() (image_grabber.ImageGrabber, error) {
 		camera, err := image_grabber.NewOpenCVCamera(s.webcamNumber)
 		if err != nil {
 			log.Println(err.Error())
-			return nil, fmt.Errorf("Camera %d not initialized by OpenCV", s.webcamNumber)
+			return nil, fmt.Errorf("camera %d not initialized by opencv", s.webcamNumber)
 		}
 		return camera, nil
 	} else if s.webcamMode == "v4l" {
 		camera, err := image_grabber.NewV4LCamera(s.webcamNumber)
 		if err != nil {
-			return nil, fmt.Errorf("Camera %d not initialized by v4l", s.webcamNumber)
+			return nil, fmt.Errorf("camera %d not initialized by v4l", s.webcamNumber)
 		}
 		return camera, nil
 	} else {
-		return nil, fmt.Errorf("Unsupported webcam mode %s", s.webcamMode)
+		return nil, fmt.Errorf("unsupported webcam mode %s", s.webcamMode)
 	}
 }
 
@@ -118,8 +118,8 @@ func (s *Server) currentFrameUpdater(workCam image_grabber.ImageGrabber) {
 				break
 			}
 			header := fmt.Sprintf(FRAMEHEADER, len(camImage))
-			if (len(s.currentFrame) < (len(header) + len(camImage))) {
-				s.currentFrame = make([]byte, (len(header) + len(camImage) * 2))
+			if len(s.currentFrame) < (len(header) + len(camImage)) {
+				s.currentFrame = make([]byte, len(header) + len(camImage) * 2)
 			}
 			copy(s.currentFrame, header)
 			copy(s.currentFrame[len(header):], camImage)

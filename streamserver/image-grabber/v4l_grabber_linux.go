@@ -17,14 +17,14 @@ func NewV4LCamera(camNum int) (ImageGrabber, error) {
 	cam, err := webcam.Open(camPath)
 	if err != nil {
 		log.Println(err)
-		return nil, fmt.Errorf("Error init web camera with %s path", camPath)
+		return nil, fmt.Errorf("error init web camera with %s path", camPath)
 	}
 	format, _ := getWebcamFormatByString("MJPG")
 	cam.SetImageFormat(format, 640, 480)
 	err = cam.StartStreaming()
 	if err != nil {
 		log.Println(err)
-		return nil, fmt.Errorf("Error switch web camera to stream mode")
+		return nil, fmt.Errorf("error switch web camera to stream mode")
 	}
 	return &V4LGrabber{
 		cam: cam,
@@ -52,7 +52,7 @@ func (c *V4LGrabber) GrabImage() ([]byte, error) {
 	switch err.(type) {
 	case nil:
 	case *webcam.Timeout:
-		return nil, fmt.Errorf("Web Camera timeout")
+		return nil, fmt.Errorf("web Camera timeout")
 	default:
 		log.Println(err)
 		return nil, fmt.Errorf("Somthing wrong...")
@@ -61,10 +61,10 @@ func (c *V4LGrabber) GrabImage() ([]byte, error) {
 	imageJpeg, err := c.cam.ReadFrame()
 	if err != nil {
 		log.Println(err)
-		return nil, fmt.Errorf("Grabbed image not retreaved from web camera")
+		return nil, fmt.Errorf("grabbed image not retreaved from web camera")
 	}
 	if len(imageJpeg) == 0 {
-		return nil, fmt.Errorf("Grabbed image not encoded to jpeg format")
+		return nil, fmt.Errorf("grabbed image not encoded to jpeg format")
 	}
 	return imageJpeg, nil
 }
