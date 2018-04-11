@@ -89,8 +89,7 @@ func (s *Server) handleStream(w http.ResponseWriter, r *http.Request) {
 	s.mutex.Lock()
 	s.clients[streamCh] = true
 	s.mutex.Unlock()
-	w.Header().Add("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate")
-	w.Header().Add("Connection", "keep-alive")
+	w.Header().Add("Cache-Control", "no-cache")
 	w.Header().Add("Transfer-Encoding", "chunked")
 	w.Header().Add("Content-Type", "multipart/x-mixed-replace;boundary=frame")
 	w.Header().Add("Expires", "-1")
