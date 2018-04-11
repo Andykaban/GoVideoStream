@@ -120,7 +120,7 @@ func (s *Server) currentFrameUpdater(workCam image_grabber.ImageGrabber) {
 			camImage, err := workCam.GrabImage()
 			if err != nil {
 				log.Println(err.Error())
-				break
+				continue
 			}
 			header := fmt.Sprintf(FRAMEHEADER, len(camImage))
 			if len(s.currentFrame) < (len(header) + len(camImage)) {

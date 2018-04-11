@@ -47,7 +47,7 @@ func (c *V4LGrabber) GrabImage() ([]byte, error) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	err := c.cam.WaitForFrame(0)
+	err := c.cam.WaitForFrame(1)
 
 	switch err.(type) {
 	case nil:
