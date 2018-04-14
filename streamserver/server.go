@@ -13,7 +13,7 @@ const FRAMEHEADER = "\r\n" +
 	"--frame\r\n" +
 	"Content-Type: image/jpeg\r\n" +
 	"Content-Length: %d\r\n" +
-	"X-Timestamp: 0.000000\r\n" + "\r\n"
+	"X-Timestamp: 0.000000\r\n\r\n"
 
 type Server struct {
 	host string
