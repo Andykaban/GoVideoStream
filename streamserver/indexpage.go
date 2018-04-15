@@ -13,7 +13,7 @@ var indexPage = `
   </head>
   <body>
     <h1>Video Streaming Demonstration</h1>
-    <img src="/stream">
+    <img src="/stream.jpg">
   </body>
 </html>
 `

@@ -76,7 +76,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.RequestURI {
 	case "/":
 		s.handleIndex(w, r)
-	case "/stream":
+	case "/stream.jpg":
 		s.handleStream(w, r)
 	default:
 		http.NotFound(w, r)
